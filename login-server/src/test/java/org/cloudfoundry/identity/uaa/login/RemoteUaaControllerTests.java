@@ -35,6 +35,7 @@ import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.client.RestOperations;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -43,7 +44,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class RemoteUaaControllerTests {
 
-    private RemoteUaaController controller = new RemoteUaaController(new MockEnvironment());
+    private RemoteUaaController controller = new RemoteUaaController(new MockEnvironment(), new RestTemplate());
 
     private MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -59,30 +60,6 @@ public class RemoteUaaControllerTests {
 
     public RemoteUaaControllerTests() {
         controller.setAuthorizationTemplate(authorizationTemplate);
-    }
-
-    @Test
-    public void testVanillaPrompts() throws Exception {
-        controller.setDefaultTemplate(authorizationTemplate);
-        setResponse(
-                        Collections.<String, Object> singletonMap("prompts",
-                                        Collections.singletonMap("foo", new Prompt("foo", "text", "Foo").getDetails())),
-                        null, HttpStatus.OK);
-        controller.prompts(request, headers, model, principal);
-        assertTrue(model.containsKey("prompts"));
-        @SuppressWarnings("rawtypes")
-        Map map = (Map) model.get("prompts");
-        assertTrue(map.containsKey("foo"));
-    }
-
-    @Test
-    public void testOverridePrompts() throws Exception {
-        controller.setPrompts(Arrays.asList(new Prompt("foo", "text", "Foo")));
-        controller.prompts(request, headers, model, principal);
-        assertTrue(model.containsKey("prompts"));
-        @SuppressWarnings("rawtypes")
-        Map map = (Map) model.get("prompts");
-        assertTrue(map.containsKey("foo"));
     }
 
     @Test
