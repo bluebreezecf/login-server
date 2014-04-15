@@ -203,6 +203,11 @@ input {
     margin-top: 10px;
 }
 
+.panel-content ul {
+    padding: 0px;
+    list-style: none outside none;
+}
+
 .application-link {
     font-size: 14px;
 }
@@ -210,8 +215,7 @@ input {
 .application-scopes {
     border: 1px solid #cccccc;
     margin: 12px 0;
-    padding: 0px;
-    list-style: none outside none;
+    padding: 20px;
 }
 
 .application-scopes li {
@@ -247,4 +251,19 @@ input {
     line-height: 12px;
     margin: 0 10px;
     min-width: 120px;
+}
+
+.profile span {
+    display: inline-block;
+    width: 60%;
+}
+
+.profile a {
+    display: inline-block;
+    width: 40%;
+    text-align: right;
+}
+
+.client-scopes .application-scopes label {
+    width: 278px;
 }

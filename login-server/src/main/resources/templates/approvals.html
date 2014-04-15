@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      layout:decorator="layouts/main">
+<head>
+    <th:block layout:include="nav :: head"></th:block>
+</head>
+<body>
+<div class="header" layout:fragment="page-header">
+    <th:block layout:include="nav :: nav"></th:block>
+</div>
+<div class="panel-container" layout:fragment="page-content">
+    <div class="panel">
+        <h1>Account Settings</h1>
+        <div class="panel-content">
+            <h2>Profile</h2>
+            <p class="profile">
+                <span sec:authentication="principal">user@example.com</span><a href="/change_password" th:href="@{/change_password}">Change Password</a>
+            </p>
+            <h2>Third Party Access</h2>
+            <p>
+                These applications have been granted access to your account.
+            </p>
+            <th:block th:each="client : ${approvals}">
+                <form action="/profile" th:action="@{/profile}" method="POST"
+                      class="panel-content client-scopes">
+                    <input type="hidden" name="clientId" th:value="${client.key}"/>
+                    <div class="application-scopes">
+                        <h3 th:text="${client.key}">Cloudbees</h3>
+                        <ul>
+                            <th:block th:each="approval, iter : ${client.value}" th:with="code=${'scope.' + approval.get('scope')}">
+                                <li>
+                                    <input type="checkbox"
+                                           name="checkedScopes"
+                                           id="scope.0"
+                                           th:id="|scope.${index}|"
+                                           th:value="|${approval.get('clientId')}-${approval.get('scope')}|"
+                                           th:checked="${approval.get('status')} == 'APPROVED'" />
+                                    <label for="scope.0"
+                                           th:for="|scope.${index}|"
+                                           th:utext="${#messages.msgOrNull(code) ?: code}">Something new.</label>
+                                </li>
+                            </th:block>
+                        </ul>
+                        <button type="submit" name="update" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </th:block>
+        </div>
+    </div>
+</div>
+</body>
+</html>

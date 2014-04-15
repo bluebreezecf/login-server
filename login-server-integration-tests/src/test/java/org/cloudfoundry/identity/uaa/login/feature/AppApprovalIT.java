@@ -17,9 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,12 +38,15 @@ public class AppApprovalIT {
 
     @Test
     public void testApprovingAnApp() throws Exception {
+        // Visit app
         webDriver.get(appUrl);
 
+        // Sign in to login server
         webDriver.findElement(By.name("username")).sendKeys("marissa");
         webDriver.findElement(By.name("password")).sendKeys("koala");
         webDriver.findElement(By.xpath("//input[@value='Sign in']")).click();
 
+        // Authorize the app for some scopes
         Assert.assertEquals("Application Authorization", webDriver.findElement(By.cssSelector("h1")).getText());
 
         webDriver.findElement(By.xpath("//label[text()='Change your password']/preceding-sibling::input")).click();
@@ -55,13 +56,22 @@ public class AppApprovalIT {
 
         Assert.assertEquals("Sample Home Page", webDriver.findElement(By.cssSelector("h1")).getText());
 
+        // View profile on the login server
         webDriver.get(baseUrl + "/profile");
-
-        Actions actions = new Actions(webDriver);
-        actions.moveToElement(webDriver.findElement(By.cssSelector("i.icon-edit-sign"))).click().perform();
 
         Assert.assertFalse(webDriver.findElement(By.xpath("//input[@value='app-password.write']")).isSelected());
         Assert.assertFalse(webDriver.findElement(By.xpath("//input[@value='app-scim.userids']")).isSelected());
+        Assert.assertTrue(webDriver.findElement(By.xpath("//input[@value='app-cloud_controller.read']")).isSelected());
+        Assert.assertTrue(webDriver.findElement(By.xpath("//input[@value='app-cloud_controller.write']")).isSelected());
+
+        // Add approvals
+        webDriver.findElement(By.xpath("//input[@value='app-password.write']")).click();
+        webDriver.findElement(By.xpath("//input[@value='app-scim.userids']")).click();
+
+        webDriver.findElement(By.xpath("//button[text()='Update']")).click();
+
+        Assert.assertTrue(webDriver.findElement(By.xpath("//input[@value='app-password.write']")).isSelected());
+        Assert.assertTrue(webDriver.findElement(By.xpath("//input[@value='app-scim.userids']")).isSelected());
         Assert.assertTrue(webDriver.findElement(By.xpath("//input[@value='app-cloud_controller.read']")).isSelected());
         Assert.assertTrue(webDriver.findElement(By.xpath("//input[@value='app-cloud_controller.write']")).isSelected());
     }
