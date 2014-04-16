@@ -37,7 +37,7 @@ public class DefaultIntegrationTestConfig {
     public PhantomJSDriver webDriver() {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         PhantomJSDriver driver = new PhantomJSDriver(desiredCapabilities);
-        driver.manage().window().setSize(new Dimension(800, 600));
+        driver.manage().window().setSize(new Dimension(1024, 768));
         return driver;
     }
 
